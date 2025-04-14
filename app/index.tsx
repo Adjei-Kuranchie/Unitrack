@@ -18,6 +18,7 @@ export default function Home() {
   if (isSignedIn) {
     return <Redirect href={"/(root)/(tabs)/home"} />;
   } else {
-    return <Redirect href={"/(auth)/welcome"} />;
+    // return <Redirect href={"/(auth)/welcome"} />;
+    return <Redirect href={"/(dashboard)/index"} />;
   }
 }

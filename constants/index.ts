@@ -25,6 +25,7 @@ import target from "@/assets/icons/target.png";
 import to from "@/assets/icons/to.png";
 import check from "@/assets/images/check.png";
 import getStarted from "@/assets/images/get-started.png";
+import icon from "@/assets/images/icon.png";
 import message from "@/assets/images/message.png";
 import noResult from "@/assets/images/no-result.png";
 import onboarding1 from "@/assets/images/onboarding1.png";
@@ -41,6 +42,7 @@ export const images = {
   check,
   noResult,
   message,
+  icon,
 };
 
 export const icons = {

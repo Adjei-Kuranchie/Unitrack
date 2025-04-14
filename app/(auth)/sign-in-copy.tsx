@@ -1,10 +1,10 @@
 import CustomButton from "@/components/CustomButton";
 import InputField from "@/components/InputField";
-import { icons, images } from "@/constants";
+import { icons } from "@/constants";
 import { useSignIn } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, Image, ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView, Text, View } from "react-native";
 
 const SignIn = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
@@ -12,7 +12,6 @@ const SignIn = () => {
   const [form, setForm] = useState({ email: "", password: "" });
   const router = useRouter();
 
-  // Handle the submission of the sign-in form
   const onSignInPress = async () => {
     if (!isLoaded) return;
 
@@ -40,11 +39,16 @@ const SignIn = () => {
   return (
     <ScrollView className="flex-1 bg-white">
       <View className="flex-1 bg-white">
-        <View className="relative w-full h-[300px]">
-          <Image source={images.signUpCar} className="z-0 w-full h-[300px]" />
-          <Text className="text-black text-2xl absolute bottom-5 left-5 font-JakartaBold">
-            Welcome 👋
+        <View className="flex flex-row items-center justify-between h-[100px] mx-4">
+          <Text className="text-black text-4xl font-JakartaBold align-middle">
+            Log In
           </Text>
+          <Link
+            href={`/sign-up-copy`}
+            className="text-lg text-center text-general-200 font-JakartaSemiBold"
+          >
+            <Text className="text-primary-500">Sign Up</Text>
+          </Link>
         </View>
         <View className="p-5">
           <InputField
@@ -62,23 +66,17 @@ const SignIn = () => {
             value={form.password}
             onChangeText={(value) => setForm({ ...form, password: value })}
           />
-
-          <CustomButton
-            title="Sign In"
-            onPress={onSignInPress}
-            className={`mt-6`}
-          />
-
-          <Link
-            href={`/sign-up`}
-            className="text-lg text-center mt-10 text-general-200"
-          >
-            <Text>Don't have an account? </Text>
-            <Text className="text-primary-500">Sign Up</Text>
-          </Link>
+          <View className="flex flex-col items-center gap-4">
+            <CustomButton
+              title="Log In"
+              onPress={onSignInPress}
+              className={`mt-6`}
+            />
+            <Text className="text-primary-500 text-xl font-JakartaSemiBold">
+              Forgot your password?
+            </Text>
+          </View>
         </View>
-
-        {/* Verification Modal */}
       </View>
     </ScrollView>
   );
