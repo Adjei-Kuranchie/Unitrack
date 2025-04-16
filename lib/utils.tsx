@@ -44,3 +44,7 @@ export function formatDate(dateString: string): string {
 
   return `${day < 10 ? "0" + day : day} ${month} ${year}`;
 }
+
+export const getCurrentTimestamp = (): number => {
+  return Date.now();
+};

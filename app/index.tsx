@@ -16,9 +16,9 @@ export default function Home() {
   }
 
   if (isSignedIn) {
-    return <Redirect href={"/(root)/(tabs)/home"} />;
+    // return <Redirect href={"/(root)/(tabs)/home"} />;
+    return <Redirect href={"/(dashboard)/lecturers/home"} />;
   } else {
-    // return <Redirect href={"/(auth)/welcome"} />;
-    return <Redirect href={"/(dashboard)/index"} />;
+    return <Redirect href={"/(auth)/welcome"} />;
   }
 }

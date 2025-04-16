@@ -217,7 +217,15 @@ const Empty = ({ loading }: { loading: boolean }) => (
   </View>
 );
 
-const Header = ({ firstName, onPress, onSearchPress }) => (
+const Header = ({
+  firstName,
+  onPress,
+  onSearchPress,
+}: {
+  firstName: string;
+  onPress: () => void;
+  onSearchPress: () => void;
+}) => (
   <>
     <View className="flex flex-row items-center justify-between my-2">
       <Text className="text-2xl font-JakartaExtraBold capitalize">
