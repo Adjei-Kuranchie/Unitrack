@@ -11,10 +11,10 @@ export default function AuthLayout() {
 }
 */
 
+import { SignOutButton } from "@/components/SignOutButton";
 import { icons } from "@/constants";
 import { Tabs } from "expo-router";
-import { Image, ImageSourcePropType, View } from "react-native";
-
+import { Image, ImageSourcePropType, Text, View } from "react-native";
 const TabIcon = ({
   focused,
   source,
@@ -70,6 +70,9 @@ export default function TabsLayout() {
           tabBarIcon: ({ focused }: { focused: boolean }) => (
             <TabIcon focused={focused} source={icons.home} />
           ),
+          header: ({ navigation, route, options }) => {
+            return <TabHeader title={options.title} />;
+          },
           headerShown: true,
         }}
       />
@@ -80,6 +83,9 @@ export default function TabsLayout() {
           tabBarIcon: ({ focused }: { focused: boolean }) => (
             <TabIcon focused={focused} source={icons.create} />
           ),
+          header: ({ navigation, route, options }) => {
+            return <TabHeader title={options.title} />;
+          },
           headerShown: true,
         }}
       />
@@ -90,6 +96,9 @@ export default function TabsLayout() {
           tabBarIcon: ({ focused }: { focused: boolean }) => (
             <TabIcon focused={focused} source={icons.list} />
           ),
+          header: ({ navigation, route, options }) => {
+            return <TabHeader title={options.title} />;
+          },
           headerShown: true,
         }}
       />
@@ -100,9 +109,21 @@ export default function TabsLayout() {
           tabBarIcon: ({ focused }: { focused: boolean }) => (
             <TabIcon focused={focused} source={icons.record} />
           ),
+          header: ({ navigation, route, options }) => {
+            return <TabHeader title={options.title} />;
+          },
           headerShown: true,
         }}
       />
     </Tabs>
   );
 }
+
+const TabHeader = ({ title }: { title: string }) => {
+  return (
+    <View className="flex-row items-center justify-between p-6  bg-white shadow-lg ">
+      <Text className="text-2xl font-JakartaExtraBold ">{title}</Text>
+      <SignOutButton />
+    </View>
+  );
+};

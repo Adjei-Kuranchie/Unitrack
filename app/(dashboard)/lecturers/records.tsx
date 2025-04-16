@@ -57,6 +57,8 @@
 // }
 
 import { icons } from "@/constants";
+import * as FileSystem from "expo-file-system";
+import * as Sharing from "expo-sharing";
 import React, { useState } from "react";
 import {
   Animated,
@@ -97,7 +99,7 @@ export default function RecordsScreen() {
   const [slideAnimation] = useState(new Animated.Value(0)); // For sliding animation
 
   // Function to handle opening the slide for session details
-  const openSessionSlide = (sessionId: string) => {
+  const openSessionSlide = (sessionId: keyof typeof mockSessionRecords) => {
     setSelectedSessionId(sessionId);
     Animated.timing(slideAnimation, {
       toValue: 1,
@@ -124,6 +126,28 @@ export default function RecordsScreen() {
     return date.toLocaleString(); // Local formatted date and time
   };
 
+  const exportCSV = async (sessionId: keyof typeof mockSessionRecords) => {
+    const csv =
+      `ID,Name,Date\n` +
+      mockSessionRecords[sessionId]
+        .map(
+          (r) =>
+            `${r.id},${r.name},${new Date(r.timestamp * 1000).toLocaleString()}`
+        )
+        .join("\n");
+
+    const fileUri =
+      FileSystem.documentDirectory + `attendance_records_${Date.now()}.csv`;
+    await FileSystem.writeAsStringAsync(fileUri, csv, {
+      encoding: FileSystem.EncodingType.UTF8,
+    });
+
+    await Sharing.shareAsync(fileUri, {
+      mimeType: "text/csv",
+      dialogTitle: "Export Attendance Records",
+      UTI: "public.comma-separated-values-text",
+    });
+  };
   return (
     <View className="flex-1 bg-white px-6 pt-10">
       {/* List of Previous Sessions */}
@@ -164,7 +188,6 @@ export default function RecordsScreen() {
             left: 0,
             right: 0,
             height: "80%",
-            backgroundColor: "#88ffff",
             paddingTop: 20,
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
@@ -173,26 +196,41 @@ export default function RecordsScreen() {
             shadowOpacity: 0.25,
             shadowRadius: 4,
           }}
+          className={`bg-slate-300  `}
         >
           <View className="flex-1 px-6">
-            <View className="flex flex-row justify-between mb-4">
-              <Text className="text-2xl font-semibold text-gray-700">
-                Attendance for{" "}
-                {
-                  mockSessions.find(
-                    (session) => session.id === selectedSessionId
-                  )?.name
-                }
-              </Text>
-              {/* Close Button */}
-              <TouchableOpacity
-                onPress={closeSessionSlide}
-                className="bg-red-600 p-3 rounded-full"
+            <View className="mb-4">
+              <View className="flex flex-row justify-between mb-4">
+                <Text className="text-2xl font-semibold text-gray-700">
+                  Attendance for{" "}
+                  {
+                    mockSessions.find(
+                      (session) => session.id === selectedSessionId
+                    )?.name
+                  }
+                </Text>
+
+                {/* Close Button */}
+                <TouchableOpacity
+                  onPress={closeSessionSlide}
+                  className="bg-red-600 p-3 rounded-full"
+                >
+                  <View className="text-white text-center font-bold text-lg">
+                    <Image source={icons.close} className="w-4 h-4" />
+                  </View>
+                </TouchableOpacity>
+              </View>
+
+              <Pressable
+                onPress={() => {
+                  exportCSV(selectedSessionId);
+                }}
+                className=" bg-primary-500 p-3  rounded-xl"
               >
-                <View className="text-white text-center font-bold text-lg">
-                  <Image source={icons.close} className="w-4 h-4" />
-                </View>
-              </TouchableOpacity>
+                <Text className="text-white text-center font-semibold">
+                  Export as CSV
+                </Text>
+              </Pressable>
             </View>
 
             <FlatList

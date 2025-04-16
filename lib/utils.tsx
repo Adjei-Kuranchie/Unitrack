@@ -48,3 +48,8 @@ export function formatDate(dateString: string): string {
 export const getCurrentTimestamp = (): number => {
   return Date.now();
 };
+
+export const generateDateFromTimestamp = (timestamp: number) => {
+  const date = new Date(timestamp * 1000);
+  return date.toLocaleDateString();
+};

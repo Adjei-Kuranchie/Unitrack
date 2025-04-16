@@ -4,27 +4,35 @@ import { icons } from "@/constants";
 import { useSignIn } from "@clerk/clerk-expo";
 import { Link, useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, ScrollView, Text, View } from "react-native";
+import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 const SignIn = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
 
   const [form, setForm] = useState({ email: "", password: "" });
+  const [role, setRole] = useState<"student" | "lecturer">("student");
+
   const router = useRouter();
 
   const onSignInPress = async () => {
     if (!isLoaded) return;
 
-    // Start the sign-in process using the email and password provided
     try {
       const signInAttempt = await signIn.create({
         identifier: form.email,
         password: form.password,
+        // Attach role metadata to the sign-in attempt (if needed in backend)
+        // For frontend-only routing, we use the `role` value below
       });
 
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
-        router.replace("/(root)/(tabs)/home");
+
+        if (role === "lecturer") {
+          router.replace("/lecturers/home");
+        } else {
+          router.replace("/students/attendance");
+        }
       } else {
         console.error(JSON.stringify(signInAttempt, null, 2));
       }
@@ -66,6 +74,39 @@ const SignIn = () => {
             value={form.password}
             onChangeText={(value) => setForm({ ...form, password: value })}
           />
+
+          <View className="flex-row justify-center gap-4 mt-4">
+            <TouchableOpacity
+              onPress={() => setRole("student")}
+              className={`px-4 py-2 rounded-full border ${
+                role === "student" ? "bg-primary-500" : "bg-gray-200"
+              }`}
+            >
+              <Text
+                className={`${
+                  role === "student" ? "text-white" : "text-gray-800"
+                }`}
+              >
+                Student
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setRole("lecturer")}
+              className={`px-4 py-2 rounded-full border ${
+                role === "lecturer" ? "bg-primary-500" : "bg-gray-200"
+              }`}
+            >
+              <Text
+                className={`${
+                  role === "lecturer" ? "text-white" : "text-gray-800"
+                }`}
+              >
+                Lecturer
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           <View className="flex flex-col items-center gap-4">
             <CustomButton
               title="Log In"
@@ -81,4 +122,5 @@ const SignIn = () => {
     </ScrollView>
   );
 };
+
 export default SignIn;
