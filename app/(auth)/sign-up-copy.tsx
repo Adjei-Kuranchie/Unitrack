@@ -3,15 +3,23 @@ import InputField from "@/components/InputField";
 import { icons, images } from "@/constants";
 import { fetchAPI } from "@/lib/fetch";
 import { useSignUp } from "@clerk/clerk-expo";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Alert, Image, ScrollView, Text, View } from "react-native";
+import {
+  Alert,
+  Image,
+  ScrollView,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { ReactNativeModal } from "react-native-modal";
 
 const SignUp = () => {
   const router = useRouter();
   const { isLoaded, signUp, setActive } = useSignUp();
   const [ShowSuccessModal, setShowSuccessModal] = useState(false);
+  const [role, setRole] = useState<"student" | "lecturer">("student");
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -26,17 +34,14 @@ const SignUp = () => {
   const onSignUpPress = async () => {
     if (!isLoaded) return;
 
-    // Start sign-up process using email and password provided
     try {
       await signUp.create({
-        firstName: form.name,
+        firstName: String(form.name),
         emailAddress: form.email,
         password: form.password,
       });
 
-      // Send user an email with verification code
       await signUp.prepareEmailAddressVerification({ strategy: "email_code" });
-
       setVerification({ ...verification, state: "pending" });
     } catch (err) {
       Alert.alert(
@@ -46,18 +51,15 @@ const SignUp = () => {
     }
   };
 
-  // Handle submission of verification form
   const onVerifyPress = async () => {
     if (!isLoaded) return;
 
     try {
-      // Use the code the user provided to attempt verification
       const signUpAttempt = await signUp.attemptEmailAddressVerification({
         code: verification.code,
       });
 
       if (signUpAttempt.status === "complete") {
-        //TODO: Create a database user
         await fetchAPI("/(api)/user", {
           method: "POST",
           body: JSON.stringify({
@@ -90,27 +92,57 @@ const SignUp = () => {
   return (
     <ScrollView className="flex-1 bg-white">
       <View className="flex-1 bg-white">
-        {/* <View className="relative w-full h-[300px]">
-          <Image source={images.icon} className="z-0 w-full h-[300px]" />
-          <Text className="text-black text-2xl absolute bottom-5 left-5 font-JakartaBold">
-            Create your Account
-          </Text>
-          </View> */}
         <View className="flex flex-row items-center justify-between h-[100px] mx-4">
           <Text className="text-black text-4xl font-JakartaBold align-middle">
             Sign Up
           </Text>
-          <Link
+          {/* <Link
             href={`/sign-in-copy`}
             className="text-lg text-center text-general-200 font-JakartaSemiBold"
           >
             <Text className="text-primary-500">Login</Text>
-          </Link>
+          </Link> */}
         </View>
-        <View className="p-5">
+        <View className="p-5 ">
+          <View className="flex-row justify-center gap-4 mb-4">
+            <TouchableOpacity
+              onPress={() => setRole("student")}
+              className={`px-4 py-2 rounded-full border ${
+                role === "student" ? "bg-primary-500" : "bg-gray-200"
+              }`}
+            >
+              <Text
+                className={`$${
+                  role === "student" ? "text-white" : "text-gray-800"
+                }`}
+              >
+                Student
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setRole("lecturer")}
+              className={`px-4 py-2 rounded-full border ${
+                role === "lecturer" ? "bg-primary-500" : "bg-gray-200"
+              }`}
+            >
+              <Text
+                className={`$${
+                  role === "lecturer" ? "text-white" : "text-gray-800"
+                }`}
+              >
+                Lecturer
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           <InputField
-            label={"Name"}
-            placeholder="Enter your name"
+            label={role === "student" ? "Registration No" : "Name"}
+            placeholder={
+              role === "student"
+                ? "Enter your registration number"
+                : "Enter your name"
+            }
             icon={icons.person}
             value={form.name}
             onChangeText={(value) => setForm({ ...form, name: value })}
@@ -136,24 +168,9 @@ const SignUp = () => {
               onPress={onSignUpPress}
               className={`mt-6`}
             />
-            {/* <Text className="text-primary-500 text-xl font-JakartaSemiBold">
-              Forgot your password?
-            </Text> */}
           </View>
-
-          {/*Oauth*/}
-          {/* <OAuth /> */}
-
-          {/* <Link
-            href={`/sign-in`}
-            className="text-lg text-center mt-10 text-general-200"
-          >
-            <Text>Already have an account? </Text>
-            <Text className="text-primary-500">Login</Text>
-          </Link> */}
         </View>
 
-        {/* Verification Modal */}
         <ReactNativeModal
           isVisible={verification.state === "pending"}
           onModalHide={() => {
@@ -192,7 +209,6 @@ const SignUp = () => {
           </View>
         </ReactNativeModal>
 
-        {/* Verified Modal */}
         <ReactNativeModal isVisible={ShowSuccessModal}>
           <View className="bg-white px-7 py-9 rounded-2xl min-h-[300px]">
             <Image
@@ -210,7 +226,11 @@ const SignUp = () => {
               className="mt-5"
               onPress={() => {
                 setShowSuccessModal(false);
-                router.push("/(root)/(tabs)/home");
+                if (role === "student") {
+                  router.push("/(dashboard)/students/attendance");
+                } else {
+                  router.push("/(dashboard)/lecturers/home");
+                }
               }}
             />
           </View>
@@ -219,4 +239,5 @@ const SignUp = () => {
     </ScrollView>
   );
 };
+
 export default SignUp;

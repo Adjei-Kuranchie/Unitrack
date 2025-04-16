@@ -1,3 +1,4 @@
+import { SignOutButton } from "@/components/SignOutButton";
 import { generateDateFromTimestamp } from "@/lib/utils";
 import { useUser } from "@clerk/clerk-expo";
 import { Link } from "expo-router";
@@ -14,9 +15,12 @@ export default function StudentAttendance() {
 
   return (
     <View className="flex-1 bg-white px-5 pt-10">
-      <Text className="text-3xl font-extrabold text-center text-primary-600 mb-6">
-        {`${user?.firstName}'s` || "My"} Attendance
-      </Text>
+      <View className="flex-row justify-between items-center mb-6">
+        <Text className="text-3xl font-extrabold text-center text-primary-600">
+          {`${user?.firstName}'s` || "My"} Attendance
+        </Text>
+        <SignOutButton />
+      </View>
       <Link href={"/(dashboard)/students/mark"} asChild>
         <Text className="text-primary-500 font-JakartaMedium text-lg mb-4 text-center bg:blue-100 p-4 rounded-full shadow-sm">
           Mark

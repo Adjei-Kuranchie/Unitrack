@@ -2,7 +2,7 @@ import CustomButton from "@/components/CustomButton";
 import InputField from "@/components/InputField";
 import { icons } from "@/constants";
 import { useSignIn } from "@clerk/clerk-expo";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, ScrollView, Text, TouchableOpacity, View } from "react-native";
 
@@ -51,12 +51,12 @@ const SignIn = () => {
           <Text className="text-black text-4xl font-JakartaBold align-middle">
             Log In
           </Text>
-          <Link
+          {/* <Link
             href={`/sign-up-copy`}
             className="text-lg text-center text-general-200 font-JakartaSemiBold"
           >
             <Text className="text-primary-500">Sign Up</Text>
-          </Link>
+          </Link> */}
         </View>
         <View className="p-5">
           <InputField
