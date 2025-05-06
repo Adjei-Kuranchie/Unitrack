@@ -1,5 +1,6 @@
 import { formatTimestamp, generateRandomCode } from "@/lib/utils";
 import * as Location from "expo-location";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   Alert,
@@ -87,6 +88,22 @@ export default function CreateCodeScreen() {
           <Text className="text-lg text-gray-700 mb-4">
             Generated Code: {generatedCode}
           </Text>
+          <Pressable
+            // some api call to submit the code
+            onPress={() => {
+              router.push("/(dashboard)/lecturers/active-codes");
+              // Reset state after submission if needed
+              setGeneratedCode("");
+              setLocation({ longitude: 0, latitude: 0 });
+              setTimestamp(null);
+              setClassSelected(undefined);
+            }}
+            className="bg-red-600 py-3 rounded-full mt-6"
+          >
+            <Text className="text-white text-center font-bold text-lg">
+              Submit
+            </Text>
+          </Pressable>
         </View>
       ) : null}
     </View>
