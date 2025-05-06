@@ -52,7 +52,7 @@ export default function CreateCodeScreen() {
         <FlatList
           horizontal
           data={classes}
-          showsHorizontalScrollIndicator={false}
+          showsHorizontalScrollIndicator={true}
           contentContainerStyle={styles.listContainer}
           renderItem={({ item }) => {
             return (

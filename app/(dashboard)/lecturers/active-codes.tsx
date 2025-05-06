@@ -6,6 +6,19 @@ const mockData = [
   { id: "1", regNo: "PS/CSC/21/0001", timestamp: 1678475247 },
   { id: "2", regNo: "PS/CSC/21/0002", timestamp: 1678475312 },
   { id: "3", regNo: "PS/CSC/21/0001", timestamp: 1678475378 },
+  { id: "4", regNo: "PS/CSC/21/0003", timestamp: 1678475487 },
+  { id: "5", regNo: "PS/CSC/21/0004", timestamp: 1678475555 },
+  { id: "6", regNo: "PS/CSC/21/0005", timestamp: 1678475655 },
+  { id: "7", regNo: "PS/CSC/21/0006", timestamp: 1678475755 },
+  { id: "8", regNo: "PS/CSC/21/0007", timestamp: 1678475855 },
+  { id: "9", regNo: "PS/CSC/21/0008", timestamp: 1678475955 },
+  { id: "10", regNo: "PS/CSC/21/0009", timestamp: 1678476055 },
+  { id: "11", regNo: "PS/CSC/21/0010", timestamp: 1678476155 },
+  { id: "12", regNo: "PS/CSC/21/0011", timestamp: 1678476255 },
+  { id: "13", regNo: "PS/CSC/21/0012", timestamp: 1678476355 },
+  { id: "14", regNo: "PS/CSC/21/0013", timestamp: 1678476455 },
+  { id: "15", regNo: "PS/CSC/21/0014", timestamp: 1678476555 },
+  { id: "16", regNo: "PS/CSC/21/0015", timestamp: 1678476655 },
 ];
 
 export default function ActiveCodesScreen() {
@@ -57,16 +70,13 @@ export default function ActiveCodesScreen() {
 
       {/* List of Attendees */}
       {sessionActive ? (
-        <View>
+        <View style={{ flex: 1, marginTop: 20 }}>
           <FlatList
             data={attendees}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <View className="bg-gray-100 p-4 rounded-lg mb-4">
-                <Text className="text-xl font-bold">{item.regNo}</Text>
-                <Text className="text-sm text-gray-600">
-                  Marked Attendance At:
-                </Text>
+              <View className="bg-gray-100 p-4 rounded-lg mb-2 w-full flex flex-row justify-between">
+                <Text className="text-lg font-bold">{item.regNo}</Text>
                 <Text className="text-sm text-gray-800">
                   {formatTimestamp(item.timestamp)}
                 </Text>
