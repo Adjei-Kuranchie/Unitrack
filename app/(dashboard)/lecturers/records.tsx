@@ -1,5 +1,4 @@
 import CustomBottomSheetModal from "@/components/CustomBottomSheetModal";
-import { icons } from "@/constants";
 import {
   BottomSheetFlatList,
   BottomSheetModal,
@@ -8,16 +7,7 @@ import {
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
 import React, { useCallback, useRef, useState } from "react";
-import {
-  Button,
-  FlatList,
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { FlatList, Pressable, Text, View } from "react-native";
 
 // Simulated data for previous sessions
 const mockSessions = [
@@ -39,22 +29,27 @@ const mockSessionRecords = {
   "3": [
     { id: "5", name: "David Brown", timestamp: 1678475555 },
     { id: "6", name: "Lucy Green", timestamp: 1678475655 },
+    { id: "7", name: "Lucy Green", timestamp: 1678475655 },
+    { id: "8", name: "Lucy Green", timestamp: 1678475655 },
+    { id: "9", name: "Lucy Green", timestamp: 1678475655 },
+    { id: "10", name: "Lucy Green", timestamp: 1678475655 },
+    { id: "11", name: "Lucy Green", timestamp: 1678475655 },
+    { id: "12", name: "Lucy Green", timestamp: 1678475655 },
+    { id: "13", name: "Lucy Green", timestamp: 1678475655 },
+    { id: "14", name: "Lucy Green", timestamp: 1678475655 },
+    { id: "15", name: "Lucy Green", timestamp: 1678475655 },
+    { id: "16", name: "Lucy Green", timestamp: 1678475655 },
   ],
 };
 
 const Records = () => {
   const modalRef = useRef<BottomSheetModal>(null);
-  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
-    null
-  );
+  const [selectedSessionId, setSelectedSessionId] =
+    useState<keyof typeof mockSessionRecords>("1");
 
   const openSessionSlide = (sessionId: keyof typeof mockSessionRecords) => {
     setSelectedSessionId(sessionId);
     handlePresentModalPress();
-  };
-
-  const closeSessionSlide = () => {
-    setSelectedSessionId(null); // Reset the selected session
   };
 
   // Formatting timestamp for display
@@ -117,79 +112,57 @@ const Records = () => {
           </Pressable>
         )}
       />
-      <Button
-        onPress={handlePresentModalPress}
-        title="Present Modal"
-        color="black"
-      />
-      <CustomBottomSheetModal ref={modalRef} title="Awesome 🔥">
-        <BottomSheetView style={styles.contentContainer}>
-          <View className="flex-1 px-6">
-            <View className="mb-4">
-              <View className="flex flex-row justify-between mb-4">
-                <Text className="text-2xl font-semibold text-gray-700">
-                  Attendance for{" "}
-                  {
-                    mockSessions.find(
-                      (session) => session.id === selectedSessionId
-                    )?.name
-                  }
-                </Text>
+      <CustomBottomSheetModal ref={modalRef}>
+        <BottomSheetView
+          style={{ flex: 1, width: "100%" }}
+          className="items-center"
+        >
+          <BottomSheetView className=" px-4">
+            <BottomSheetView className="flex flex-row justify-between mb-4">
+              <Text className="text-2xl font-semibold text-gray-700">
+                Attendance for{" "}
+                {
+                  mockSessions.find(
+                    (session) => session.id === selectedSessionId
+                  )?.name
+                }
+              </Text>
+            </BottomSheetView>
 
-                {/* Close Button */}
-                <TouchableOpacity
-                  onPress={closeSessionSlide}
-                  className="bg-red-600 p-3 rounded-full"
-                >
-                  <View className="text-white text-center font-bold text-lg">
-                    <Image source={icons.close} className="w-4 h-4" />
-                  </View>
-                </TouchableOpacity>
-              </View>
+            <Pressable
+              onPress={() => {
+                exportCSV(selectedSessionId);
+              }}
+              className=" bg-primary-500 p-3  rounded-xl"
+            >
+              <Text className="text-white text-center font-semibold">
+                Export as CSV
+              </Text>
+            </Pressable>
+          </BottomSheetView>
 
-              <Pressable
-                onPress={() => {
-                  exportCSV(selectedSessionId);
-                }}
-                className=" bg-primary-500 p-3  rounded-xl"
-              >
-                <Text className="text-white text-center font-semibold">
-                  Export as CSV
-                </Text>
-              </Pressable>
-            </View>
-          </View>
           <BottomSheetFlatList
-            data={mockSessionRecords[1]}
+            showsVerticalScrollIndicator={true}
+            data={mockSessionRecords[selectedSessionId].slice(0, 5)}
+            className="w-full px-4 mt-6 "
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => (
-              <BottomSheetView className="bg-gray-100 p-4 rounded-lg mb-4">
+              <BottomSheetView className="bg-gray-100 p-4 rounded-lg mb-4 w-full flex flex-row justify-between">
                 <Text className="text-lg font-bold">{item.name}</Text>
-                <Text className="text-sm text-gray-600">
-                  Marked Attendance At:
-                </Text>
                 <Text className="text-sm text-gray-800">
                   {formatTimestamp(item.timestamp)}
                 </Text>
               </BottomSheetView>
             )}
           />
+          <Text className="text-sm text-gray-500 mt-2 mb-4">
+            {mockSessionRecords[selectedSessionId].length > 5
+              ? `+${mockSessionRecords[selectedSessionId].length - 5} more`
+              : ""}
+          </Text>
         </BottomSheetView>
       </CustomBottomSheetModal>
     </View>
   );
 };
 export default Records;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    justifyContent: "center",
-    backgroundColor: "grey",
-  },
-  contentContainer: {
-    flex: 1,
-    alignItems: "center",
-  },
-});
