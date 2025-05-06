@@ -7,6 +7,8 @@ import "../global.css";
 // import { tokenCache } from "@/lib/auth";
 import { ClerkProvider } from "@clerk/clerk-expo";
 import { tokenCache } from "@clerk/clerk-expo/token-cache";
+import { BottomSheetModalProvider } from "@gorhom/bottom-sheet";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // Prevent the splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
@@ -40,13 +42,17 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider tokenCache={tokenCache} publishableKey={publishableKey}>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" options={{ headerShown: false }} />
-        <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-        <Stack.Screen name="(dashboard)" options={{ headerShown: false }} />
-        <Stack.Screen name="(attendance)" options={{ headerShown: false }} />
-        <Stack.Screen name="(settings)" options={{ headerShown: false }} />
-      </Stack>
+      <GestureHandlerRootView>
+        <BottomSheetModalProvider>
+          <Stack screenOptions={{ headerShown: false }}>
+            <Stack.Screen name="index" options={{ headerShown: false }} />
+            <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+            <Stack.Screen name="(dashboard)" options={{ headerShown: false }} />
+            <Stack.Screen name="attendance" options={{ headerShown: false }} />
+            <Stack.Screen name="(settings)" options={{ headerShown: false }} />
+          </Stack>
+        </BottomSheetModalProvider>
+      </GestureHandlerRootView>
     </ClerkProvider>
   );
 }

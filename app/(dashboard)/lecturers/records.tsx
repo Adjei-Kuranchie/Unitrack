@@ -1,71 +1,19 @@
-// import * as FileSystem from "expo-file-system";
-// import * as Sharing from "expo-sharing";
-// import { FlatList, Pressable, Text, View } from "react-native";
-
-// const mockData = [
-//   { id: "1", name: "Alice Johnson", date: "2025-04-14", status: "Present" },
-//   { id: "2", name: "Bob Smith", date: "2025-04-14", status: "Absent" },
-//   { id: "3", name: "Clara Lee", date: "2025-04-14", status: "Present" },
-// ];
-
-// export default function RecordsScreen() {
-//   const exportCSV = async () => {
-//     const csv =
-//       `ID,Name,Date,Status\n` +
-//       mockData.map((r) => `${r.id},${r.name},${r.date},${r.status}`).join("\n");
-
-//     const fileUri = FileSystem.documentDirectory + "attendance_records.csv";
-//     await FileSystem.writeAsStringAsync(fileUri, csv, {
-//       encoding: FileSystem.EncodingType.UTF8,
-//     });
-
-//     await Sharing.shareAsync(fileUri, {
-//       mimeType: "text/csv",
-//       dialogTitle: "Export Attendance Records",
-//       UTI: "public.comma-separated-values-text",
-//     });
-//   };
-
-//   return (
-//     <View className="flex-1 bg-white px-4 pt-10">
-//       <View className="flex flex-row justify-around items-center mb-4">
-//         <Text className="text-2xl font-bold text-center ">
-//           Attendance Records
-//         </Text>
-//         <Pressable
-//           onPress={exportCSV}
-//           className=" bg-primary-500 p-3  rounded-xl"
-//         >
-//           <Text className="text-white text-center font-semibold">
-//             Export as CSV
-//           </Text>
-//         </Pressable>
-//       </View>
-//       <FlatList
-//         className="h-full"
-//         data={mockData}
-//         keyExtractor={(item) => item.id}
-//         renderItem={({ item }) => (
-//           <View className="flex-row justify-between py-2 border-b border-gray-200">
-//             <Text>{item.name}</Text>
-//             <Text className="text-gray-500">{item.status}</Text>
-//           </View>
-//         )}
-//       />
-//     </View>
-//   );
-// }
-
+import CustomBottomSheetModal from "@/components/CustomBottomSheetModal";
 import { icons } from "@/constants";
+import {
+  BottomSheetFlatList,
+  BottomSheetModal,
+  BottomSheetView,
+} from "@gorhom/bottom-sheet";
 import * as FileSystem from "expo-file-system";
 import * as Sharing from "expo-sharing";
-import React, { useState } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import {
-  Animated,
-  Easing,
+  Button,
   FlatList,
   Image,
   Pressable,
+  StyleSheet,
   Text,
   TouchableOpacity,
   View,
@@ -94,29 +42,18 @@ const mockSessionRecords = {
   ],
 };
 
-export default function RecordsScreen() {
-  const [selectedSessionId, setSelectedSessionId] = useState(null);
-  const [slideAnimation] = useState(new Animated.Value(0)); // For sliding animation
+const Records = () => {
+  const modalRef = useRef<BottomSheetModal>(null);
+  const [selectedSessionId, setSelectedSessionId] = useState<string | null>(
+    null
+  );
 
-  // Function to handle opening the slide for session details
   const openSessionSlide = (sessionId: keyof typeof mockSessionRecords) => {
     setSelectedSessionId(sessionId);
-    Animated.timing(slideAnimation, {
-      toValue: 1,
-      duration: 500,
-      easing: Easing.ease,
-      useNativeDriver: true,
-    }).start();
+    handlePresentModalPress();
   };
 
-  // Function to close the session slide
   const closeSessionSlide = () => {
-    Animated.timing(slideAnimation, {
-      toValue: 0,
-      duration: 500,
-      easing: Easing.ease,
-      useNativeDriver: true,
-    }).start();
     setSelectedSessionId(null); // Reset the selected session
   };
 
@@ -148,6 +85,16 @@ export default function RecordsScreen() {
       UTI: "public.comma-separated-values-text",
     });
   };
+
+  // callbacks
+  const handlePresentModalPress = useCallback(() => {
+    modalRef.current?.present();
+  }, []);
+
+  const handleSheetChanges = useCallback((index: number) => {
+    console.log("handleSheetChanges", index);
+  }, []);
+
   return (
     <View className="flex-1 bg-white px-6 pt-10">
       {/* List of Previous Sessions */}
@@ -170,34 +117,13 @@ export default function RecordsScreen() {
           </Pressable>
         )}
       />
-
-      {/* Slide for Selected Session Records */}
-      {selectedSessionId && (
-        <Animated.View
-          style={{
-            transform: [
-              {
-                translateY: slideAnimation.interpolate({
-                  inputRange: [0, 1],
-                  outputRange: [500, 0],
-                }),
-              },
-            ],
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            right: 0,
-            height: "80%",
-            paddingTop: 20,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            shadowColor: "#000",
-            shadowOffset: { width: 0, height: -2 },
-            shadowOpacity: 0.25,
-            shadowRadius: 4,
-          }}
-          className={`bg-slate-300  `}
-        >
+      <Button
+        onPress={handlePresentModalPress}
+        title="Present Modal"
+        color="black"
+      />
+      <CustomBottomSheetModal ref={modalRef} title="Awesome 🔥">
+        <BottomSheetView style={styles.contentContainer}>
           <View className="flex-1 px-6">
             <View className="mb-4">
               <View className="flex flex-row justify-between mb-4">
@@ -232,25 +158,38 @@ export default function RecordsScreen() {
                 </Text>
               </Pressable>
             </View>
-
-            <FlatList
-              data={mockSessionRecords[selectedSessionId]}
-              keyExtractor={(item) => item.id}
-              renderItem={({ item }) => (
-                <View className="bg-gray-100 p-4 rounded-lg mb-4">
-                  <Text className="text-lg font-bold">{item.name}</Text>
-                  <Text className="text-sm text-gray-600">
-                    Marked Attendance At:
-                  </Text>
-                  <Text className="text-sm text-gray-800">
-                    {formatTimestamp(item.timestamp)}
-                  </Text>
-                </View>
-              )}
-            />
           </View>
-        </Animated.View>
-      )}
+          <BottomSheetFlatList
+            data={mockSessionRecords[1]}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => (
+              <BottomSheetView className="bg-gray-100 p-4 rounded-lg mb-4">
+                <Text className="text-lg font-bold">{item.name}</Text>
+                <Text className="text-sm text-gray-600">
+                  Marked Attendance At:
+                </Text>
+                <Text className="text-sm text-gray-800">
+                  {formatTimestamp(item.timestamp)}
+                </Text>
+              </BottomSheetView>
+            )}
+          />
+        </BottomSheetView>
+      </CustomBottomSheetModal>
     </View>
   );
-}
+};
+export default Records;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 24,
+    justifyContent: "center",
+    backgroundColor: "grey",
+  },
+  contentContainer: {
+    flex: 1,
+    alignItems: "center",
+  },
+});

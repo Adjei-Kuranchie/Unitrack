@@ -53,3 +53,17 @@ export const generateDateFromTimestamp = (timestamp: number) => {
   const date = new Date(timestamp * 1000);
   return date.toLocaleDateString();
 };
+
+export const generateRandomCode = () => {
+  const chars = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+  let code = "";
+  for (let i = 0; i < 6; i++) {
+    code += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return code;
+};
+
+export const formatTimestamp = (timestamp: number) => {
+  const date = new Date(timestamp * 1000); // Convert seconds to milliseconds
+  return date.toLocaleString(); // Format as a local string (date + time)
+};

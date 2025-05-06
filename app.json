@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Uber",
-    "slug": "uber",
+    "name": "Unitrack",
+    "slug": "unitrack",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -21,7 +21,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.adjeikuranchie.uber"
+      "package": "com.adjeikuranchie.unitrack"
     },
     "web": {
       "bundler": "metro",

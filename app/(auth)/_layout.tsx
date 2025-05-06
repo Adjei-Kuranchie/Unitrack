@@ -8,18 +8,6 @@ export default function AuthLayout() {
       screenOptions={{ headerShown: false }}
     >
       <Tabs.Screen
-        name="welcome"
-        options={{ headerShown: false, href: null }}
-      />
-      <Tabs.Screen
-        name="sign-in"
-        options={{ headerShown: false, href: null }}
-      />
-      <Tabs.Screen
-        name="sign-up"
-        options={{ headerShown: false, href: null }}
-      />
-      <Tabs.Screen
         name="sign-up-copy"
         options={{
           title: "Sign Up",
