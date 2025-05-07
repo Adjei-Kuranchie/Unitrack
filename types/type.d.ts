@@ -132,6 +132,34 @@ declare interface DriverStore {
   clearSelectedDriver: () => void;
 }
 
+// New attendance store
+declare interface AttendanceStore {
+  // Session data
+  sessionActive: boolean;
+  sessionCode: string;
+  sessionClass: string;
+  sessionTimestamp: number;
+  sessionLocation: {
+    latitude: number;
+    longitude: number;
+  };
+
+  // Attendees list
+  attendees: Attendee[];
+
+  // Actions
+  startSession: (
+    code: string,
+    className: string,
+    timestamp: number,
+    location: { latitude: number; longitude: number }
+  ) => void;
+
+  endSession: () => void;
+
+  addAttendee: (regNo: string) => void;
+}
+
 declare interface DriverCardProps {
   item: MarkerData;
   selected: number;

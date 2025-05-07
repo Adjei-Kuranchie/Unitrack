@@ -1,4 +1,5 @@
 import { formatTimestamp, generateRandomCode } from "@/lib/utils";
+import { useAttendanceStore } from "@/store";
 import * as Location from "expo-location";
 import { router } from "expo-router";
 import React, { useState } from "react";
@@ -19,6 +20,8 @@ export default function CreateCodeScreen() {
   const [generatedCode, setGeneratedCode] = useState("");
   const [classSelected, setClassSelected] = useState<string>();
   const [loading, setLoading] = useState(false);
+
+  const startSession = useAttendanceStore((state) => state.startSession);
 
   // Get the device's current location
   const getLocation = async (lecture = "") => {
@@ -45,6 +48,28 @@ export default function CreateCodeScreen() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSubmit = () => {
+    if (!timestamp || !classSelected || !generatedCode) {
+      Alert.alert("Error", "Please generate a code first.");
+      return;
+    }
+
+    // Start the session in the store
+    startSession(generatedCode, classSelected, timestamp, {
+      latitude: location.latitude,
+      longitude: location.longitude,
+    });
+
+    // Navigate to the active codes screen
+    router.push("/(dashboard)/lecturers/active-codes");
+
+    // Reset state after submission
+    setGeneratedCode("");
+    setLocation({ longitude: 0, latitude: 0 });
+    setTimestamp(null);
+    setClassSelected(undefined);
   };
 
   return (
@@ -90,14 +115,7 @@ export default function CreateCodeScreen() {
           </Text>
           <Pressable
             // some api call to submit the code
-            onPress={() => {
-              router.push("/(dashboard)/lecturers/active-codes");
-              // Reset state after submission if needed
-              setGeneratedCode("");
-              setLocation({ longitude: 0, latitude: 0 });
-              setTimestamp(null);
-              setClassSelected(undefined);
-            }}
+            onPress={handleSubmit}
             className="bg-red-600 py-3 rounded-full mt-6"
           >
             <Text className="text-white text-center font-bold text-lg">

@@ -1,54 +1,84 @@
-import React, { useEffect, useState } from "react";
+import { formatTimestamp } from "@/lib/utils";
+import { useAttendanceStore } from "@/store";
+import React, { useEffect } from "react";
 import { Alert, FlatList, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-// Simulated data for attendees (You can replace this with actual data from your backend)
-const mockData = [
-  { id: "1", regNo: "PS/CSC/21/0001", timestamp: 1678475247 },
-  { id: "2", regNo: "PS/CSC/21/0002", timestamp: 1678475312 },
-  { id: "3", regNo: "PS/CSC/21/0001", timestamp: 1678475378 },
-  { id: "4", regNo: "PS/CSC/21/0003", timestamp: 1678475487 },
-  { id: "5", regNo: "PS/CSC/21/0004", timestamp: 1678475555 },
-  { id: "6", regNo: "PS/CSC/21/0005", timestamp: 1678475655 },
-  { id: "7", regNo: "PS/CSC/21/0006", timestamp: 1678475755 },
-  { id: "8", regNo: "PS/CSC/21/0007", timestamp: 1678475855 },
-  { id: "9", regNo: "PS/CSC/21/0008", timestamp: 1678475955 },
-  { id: "10", regNo: "PS/CSC/21/0009", timestamp: 1678476055 },
-  { id: "11", regNo: "PS/CSC/21/0010", timestamp: 1678476155 },
-  { id: "12", regNo: "PS/CSC/21/0011", timestamp: 1678476255 },
-  { id: "13", regNo: "PS/CSC/21/0012", timestamp: 1678476355 },
-  { id: "14", regNo: "PS/CSC/21/0013", timestamp: 1678476455 },
-  { id: "15", regNo: "PS/CSC/21/0014", timestamp: 1678476555 },
-  { id: "16", regNo: "PS/CSC/21/0015", timestamp: 1678476655 },
+// Example student registration numbers for testing the addAttendee function
+const testStudentRegNos = [
+  "PS/CSC/21/0001",
+  "PS/CSC/21/0002",
+  "PS/CSC/21/0003",
+  "PS/CSC/21/0004",
+  "PS/CSC/21/0005",
 ];
 
 export default function ActiveCodesScreen() {
-  const [attendees, setAttendees] = useState(mockData); // Replace with dynamic data later
-  const [sessionActive, setSessionActive] = useState(true); // Track if the session is active
+  // Get state and actions from the attendance store
+  const {
+    sessionActive,
+    sessionCode,
+    sessionClass,
+    attendees,
+    endSession,
+    addAttendee,
+  } = useAttendanceStore();
 
-  // Function to handle session end
-  const endSession = () => {
-    setSessionActive(false); // Ends the session
-    Alert.alert("Session Ended", "The attendance session has ended.");
+  // Handle session end
+  const handleEndSession = () => {
+    Alert.alert(
+      "End Session",
+      "Are you sure you want to end this attendance session?",
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "End Session",
+          style: "destructive",
+          onPress: () => {
+            endSession();
+            Alert.alert("Session Ended", "The attendance session has ended.");
+          },
+        },
+      ]
+    );
   };
 
-  // Formatting timestamp for display
-  const formatTimestamp = (timestamp: number) => {
-    const date = new Date(timestamp * 1000); // Convert to milliseconds
-    return date.toLocaleString(); // Local formatted date and time
+  // Add a sample student for testing - only for demonstration purposes
+  // In a real app, this would come from students scanning QR codes or entering codes
+  const addSampleAttendee = () => {
+    if (!sessionActive) return;
+
+    // Get a random student reg number from our test list
+    const randomIndex = Math.floor(Math.random() * testStudentRegNos.length);
+    const regNo = testStudentRegNos[randomIndex];
+
+    // Add the attendee to our store
+    addAttendee(regNo);
   };
 
+  // Simulate students joining (for testing only)
   useEffect(() => {
-    // You can implement logic to stop the session after a certain time, etc.
-    const timer = setTimeout(
-      () => {
-        setSessionActive(false); // End session after 30 minutes or any condition
-      },
-      30 * 60 * 1000
-    ); // Example: End session after 30 minutes
+    if (sessionActive) {
+      // Add a sample student every few seconds for testing
+      const interval = setInterval(addSampleAttendee, 5000);
 
-    return () => clearTimeout(timer); // Cleanup timer on component unmount
-  }, []);
+      // Auto-end session after 30 minutes
+      const timer = setTimeout(
+        () => {
+          endSession();
+        },
+        30 * 60 * 1000
+      );
+
+      return () => {
+        clearInterval(interval);
+        clearTimeout(timer);
+      };
+    }
+  }, [sessionActive]);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
@@ -58,10 +88,18 @@ export default function ActiveCodesScreen() {
           {sessionActive ? "Active Attendance Session" : "Session Ended"}
         </Text>
 
+        {/* Session Details */}
+        {sessionActive && (
+          <View className="mb-4">
+            <Text className="text-md text-gray-600">Class: {sessionClass}</Text>
+            <Text className="text-md text-gray-600">Code: {sessionCode}</Text>
+          </View>
+        )}
+
         {/* End Session Button */}
         {sessionActive && (
           <Pressable
-            onPress={endSession}
+            onPress={handleEndSession}
             className="bg-red-600 py-3 rounded-full mt-6"
           >
             <Text className="text-white text-center font-bold text-lg">
@@ -86,11 +124,18 @@ export default function ActiveCodesScreen() {
               </Text>
             </View>
           )}
+          ListEmptyComponent={
+            <Text className="text-center text-gray-500 mt-4">
+              Waiting for students to join...
+            </Text>
+          }
         />
       ) : (
-        <Text className="text-center text-gray-600">
-          No attendees during the session.
-        </Text>
+        <View className="flex-1 justify-center items-center">
+          <Text className="text-center text-gray-600">
+            No active attendance session.
+          </Text>
+        </View>
       )}
     </SafeAreaView>
   );
