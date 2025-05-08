@@ -80,23 +80,23 @@ export const icons = {
 export const onboarding = [
   {
     id: 1,
-    title: "The perfect ride is just a tap away!",
+    title: "Effortless Attendance",
     description:
-      "Your journey begins with Ryde. Find your ideal ride effortlessly.",
+      "Generate and share secure attendance codes with one tap — fast, simple, and reliable.",
     image: images.onboarding1,
   },
   {
     id: 2,
-    title: "Best car in your hands with Ryde",
+    title: "Real-Time Location Verification",
     description:
-      "Discover the convenience of finding your perfect ride with Ryde",
+      "Ensure accurate student presence using GPS-based location checks. No more guesswork.",
     image: images.onboarding2,
   },
   {
     id: 3,
-    title: "Your ride, your way. Let's go!",
+    title: "Track and Export Records",
     description:
-      "Enter your destination, sit back, and let us take care of the rest.",
+      "View, manage, and export session attendance records anytime — in just a few taps.",
     image: images.onboarding3,
   },
 ];

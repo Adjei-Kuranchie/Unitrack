@@ -75,15 +75,15 @@ const SignIn = () => {
             onChangeText={(value) => setForm({ ...form, password: value })}
           />
 
-          <View className="flex-row justify-center gap-4 mt-4">
+          <View className="flex flex-row justify-center gap-2 mt-4 overflow-hidden bg-white ">
             <TouchableOpacity
               onPress={() => setRole("student")}
-              className={`px-4 py-2 rounded-full border ${
+              className={`px-4 py-2 rounded-lg border-none ${
                 role === "student" ? "bg-primary-500" : "bg-gray-200"
               }`}
             >
               <Text
-                className={`${
+                className={` ${
                   role === "student" ? "text-white" : "text-gray-800"
                 }`}
               >
@@ -93,7 +93,7 @@ const SignIn = () => {
 
             <TouchableOpacity
               onPress={() => setRole("lecturer")}
-              className={`px-4 py-2 rounded-full border ${
+              className={`px-4 py-2 rounded-lg border-none ${
                 role === "lecturer" ? "bg-primary-500" : "bg-gray-200"
               }`}
             >
@@ -113,10 +113,18 @@ const SignIn = () => {
               onPress={onSignInPress}
               className={`mt-6`}
             />
-            <Text className="text-primary-500 text-xl font-JakartaSemiBold">
-              Forgot your password?
-            </Text>
           </View>
+          <TouchableOpacity className="mt-6 items-center">
+            <Text className=" text-xl font-JakartaSemiBold">
+              Don't have an account?{" "}
+              <Text
+                className="text-primary-500"
+                onPress={() => router.push("/(auth)/sign-up")}
+              >
+                Sign up
+              </Text>
+            </Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ScrollView>

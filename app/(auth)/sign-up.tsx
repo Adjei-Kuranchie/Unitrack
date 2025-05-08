@@ -96,46 +96,8 @@ const SignUp = () => {
           <Text className="text-black text-4xl font-JakartaBold align-middle">
             Sign Up
           </Text>
-          {/* <Link
-            href={`/sign-in-copy`}
-            className="text-lg text-center text-general-200 font-JakartaSemiBold"
-          >
-            <Text className="text-primary-500">Login</Text>
-          </Link> */}
         </View>
         <View className="p-5 ">
-          <View className="flex-row justify-center gap-4 mb-4">
-            <TouchableOpacity
-              onPress={() => setRole("student")}
-              className={`px-4 py-2 rounded-full border ${
-                role === "student" ? "bg-primary-500" : "bg-gray-200"
-              }`}
-            >
-              <Text
-                className={`$${
-                  role === "student" ? "text-white" : "text-gray-800"
-                }`}
-              >
-                Student
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setRole("lecturer")}
-              className={`px-4 py-2 rounded-full border ${
-                role === "lecturer" ? "bg-primary-500" : "bg-gray-200"
-              }`}
-            >
-              <Text
-                className={`$${
-                  role === "lecturer" ? "text-white" : "text-gray-800"
-                }`}
-              >
-                Lecturer
-              </Text>
-            </TouchableOpacity>
-          </View>
-
           <InputField
             label={role === "student" ? "Registration No" : "Name"}
             placeholder={
@@ -162,6 +124,39 @@ const SignUp = () => {
             value={form.password}
             onChangeText={(value) => setForm({ ...form, password: value })}
           />
+
+          <View className="flex flex-row justify-center gap-2 mt-4 overflow-hidden bg-white">
+            <TouchableOpacity
+              onPress={() => setRole("student")}
+              className={`px-4 py-2 rounded-lg border-none ${
+                role === "student" ? "bg-primary-500" : "bg-gray-200"
+              }`}
+            >
+              <Text
+                className={` ${
+                  role === "student" ? "text-white" : "text-gray-800"
+                }`}
+              >
+                Student
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => setRole("lecturer")}
+              className={`px-4 py-2 rounded-lg border-none ${
+                role === "lecturer" ? "bg-primary-500" : "bg-gray-200"
+              }`}
+            >
+              <Text
+                className={`${
+                  role === "lecturer" ? "text-white" : "text-gray-800"
+                }`}
+              >
+                Lecturer
+              </Text>
+            </TouchableOpacity>
+          </View>
+
           <View className="flex flex-col items-center gap-4">
             <CustomButton
               title="Sign Up"
@@ -169,6 +164,17 @@ const SignUp = () => {
               className={`mt-6`}
             />
           </View>
+          <TouchableOpacity className="mt-6 items-center">
+            <Text className=" text-xl font-JakartaSemiBold">
+              Already have an account?{" "}
+              <Text
+                className="text-primary-500"
+                onPress={() => router.push("/(auth)/sign-in")}
+              >
+                Log in
+              </Text>
+            </Text>
+          </TouchableOpacity>
         </View>
 
         <ReactNativeModal

@@ -20,6 +20,6 @@ export default function Home() {
     return <Redirect href={"/(dashboard)/lecturers/home"} />;
     // return <Redirect href={"/(dashboard)/students/attendance"} />;
   } else {
-    return <Redirect href={"/(auth)/sign-up-copy"} />;
+    return <Redirect href={"/(auth)/sign-up"} />;
   }
 }

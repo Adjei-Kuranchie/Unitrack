@@ -1,8 +1,8 @@
-import { AttendanceStore, LocationStore } from "@/types/type";
+import { AttendanceStore } from "@/types/type";
 import { create } from "zustand";
 
 // Original location store
-export const useLocationStore = create<LocationStore>((set) => {
+/* export const useLocationStore = create<LocationStore>((set) => {
   return {
     userAddress: null,
     userLongitude: null,
@@ -41,7 +41,7 @@ export const useLocationStore = create<LocationStore>((set) => {
       }));
     },
   };
-});
+}); */
 
 export const useAttendanceStore = create<AttendanceStore>((set) => {
   return {
