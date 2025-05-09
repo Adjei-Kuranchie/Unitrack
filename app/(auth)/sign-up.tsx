@@ -24,6 +24,7 @@ const SignUp = () => {
     name: "",
     email: "",
     password: "",
+    role: role,
   });
   const [verification, setVerification] = useState({
     state: "default",
@@ -66,6 +67,7 @@ const SignUp = () => {
             name: form.name,
             email: form.email,
             clerkId: signUpAttempt.createdUserId,
+            role: form.role,
           }),
         });
 
