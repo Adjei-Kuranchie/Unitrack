@@ -19,12 +19,11 @@ const SignUp = () => {
   const router = useRouter();
   const { isLoaded, signUp, setActive } = useSignUp();
   const [ShowSuccessModal, setShowSuccessModal] = useState(false);
-  const [role, setRole] = useState<"student" | "lecturer">("student");
+  const [role, setRole] = useState<"student" | "lecturer">();
   const [form, setForm] = useState({
     name: "",
     email: "",
     password: "",
-    role: role,
   });
   const [verification, setVerification] = useState({
     state: "default",
@@ -67,7 +66,7 @@ const SignUp = () => {
             name: form.name,
             email: form.email,
             clerkId: signUpAttempt.createdUserId,
-            role: form.role,
+            role: role,
           }),
         });
 
