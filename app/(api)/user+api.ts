@@ -23,7 +23,7 @@ export async function POST(request: Request) {
     VALUES (
       ${name}, 
       ${email}, 
-      ${clerkId}
+      ${clerkId},
       ${role}
       );
   `;
