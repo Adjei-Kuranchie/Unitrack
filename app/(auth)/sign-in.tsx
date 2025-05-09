@@ -1,6 +1,7 @@
 import CustomButton from "@/components/CustomButton";
 import InputField from "@/components/InputField";
 import { icons } from "@/constants";
+import { fetchAPI } from "@/lib/fetch";
 import { useSignIn } from "@clerk/clerk-expo";
 import { useRouter } from "expo-router";
 import { useState } from "react";
@@ -10,7 +11,6 @@ const SignIn = () => {
   const { signIn, setActive, isLoaded } = useSignIn();
 
   const [form, setForm] = useState({ email: "", password: "" });
-  const [role, setRole] = useState<"student" | "lecturer">("student");
 
   const router = useRouter();
 
@@ -21,12 +21,23 @@ const SignIn = () => {
       const signInAttempt = await signIn.create({
         identifier: form.email,
         password: form.password,
-        // Attach role metadata to the sign-in attempt (if needed in backend)
-        // For frontend-only routing, we use the `role` value below
       });
 
       if (signInAttempt.status === "complete") {
         await setActive({ session: signInAttempt.createdSessionId });
+        const {
+          data: { role },
+        } = await fetchAPI(
+          `/(api)/user?email=${encodeURIComponent(form.email)}`,
+          {
+            method: "GET",
+            headers: {
+              Accept: "application/json",
+            },
+          }
+        );
+
+        console.log(role);
 
         if (role === "lecturer") {
           router.replace("/lecturers/home");
@@ -51,12 +62,6 @@ const SignIn = () => {
           <Text className="text-black text-4xl font-JakartaBold align-middle">
             Log In
           </Text>
-          {/* <Link
-            href={`/sign-up-copy`}
-            className="text-lg text-center text-general-200 font-JakartaSemiBold"
-          >
-            <Text className="text-primary-500">Sign Up</Text>
-          </Link> */}
         </View>
         <View className="p-5">
           <InputField
@@ -74,38 +79,6 @@ const SignIn = () => {
             value={form.password}
             onChangeText={(value) => setForm({ ...form, password: value })}
           />
-
-          <View className="flex flex-row justify-center gap-2 mt-4 overflow-hidden bg-white ">
-            <TouchableOpacity
-              onPress={() => setRole("student")}
-              className={`px-4 py-2 rounded-lg border-none ${
-                role === "student" ? "bg-primary-500" : "bg-gray-200"
-              }`}
-            >
-              <Text
-                className={` ${
-                  role === "student" ? "text-white" : "text-gray-800"
-                }`}
-              >
-                Student
-              </Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => setRole("lecturer")}
-              className={`px-4 py-2 rounded-lg border-none ${
-                role === "lecturer" ? "bg-primary-500" : "bg-gray-200"
-              }`}
-            >
-              <Text
-                className={`${
-                  role === "lecturer" ? "text-white" : "text-gray-800"
-                }`}
-              >
-                Lecturer
-              </Text>
-            </TouchableOpacity>
-          </View>
 
           <View className="flex flex-col items-center gap-4">
             <CustomButton
